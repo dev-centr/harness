@@ -15,7 +15,7 @@
 
 * Mixr catalog drops Anthropic defaults; GLM / MiniMax / Kimi / DeepSeek tiers; suppress lists.
 * On-device router call via local OpenAI-compat URL; RAM/unreachable failover; `HORNET_AVAIL_RAM_MB` override.
-* HTTP: `GET /api/health`, `GET /v1/models`, `POST /v1/chat/completions`, `POST /api/provider/session|turn` for HornetDriver.
+* HTTP: `GET /api/health`, `GET /v1/models`, `POST /v1/chat/completions`, `POST /api/provider/session|turn` for the provider driver (now `HarnessDriver`).
 * Version **0.5.0**.
 
 == Prior
