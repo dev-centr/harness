@@ -1,7 +1,7 @@
-module hornet.temporal;
+module harness.temporal;
 
-import hornet.models;
-import hornet.store;
+import harness.models;
+import harness.store;
 
 import std.array : split;
 import std.algorithm : canFind, max, sort, startsWith;

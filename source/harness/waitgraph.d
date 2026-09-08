@@ -1,7 +1,7 @@
-module hornet.waitgraph;
+module harness.waitgraph;
 
-import hornet.models;
-import hornet.store;
+import harness.models;
+import harness.store;
 
 struct WaitCheck
 {

@@ -1,6 +1,6 @@
-module hornet.store;
+module harness.store;
 
-import hornet.models;
+import harness.models;
 
 import std.array : split;
 import std.algorithm : canFind, sort, splitter;
@@ -204,7 +204,7 @@ struct ChatStore
         graph.nodes.object[coord.id] = JSONValue(["type": JSONValue(cast(string) coord.type)]);
         saveGraph(graph);
         JSONValue sum = JSONValue.emptyObject;
-        sum["text"] = JSONValue("Hornet session started: " ~ title);
+        sum["text"] = JSONValue("Harness session started: " ~ title);
         appendMetathread("summary", sum);
         appendChat(coord.id, ChatLine("assistant", "Coordinator online — " ~ title, 12));
         return coord;

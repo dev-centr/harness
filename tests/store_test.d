@@ -1,7 +1,7 @@
-module hornet_store_test;
+module harness_store_test;
 
-import hornet.models : ChatLine, NodeRecord, NodeType;
-import hornet.store : ChatStore;
+import harness.models : ChatLine, NodeRecord, NodeType;
+import harness.store : ChatStore;
 
 import std.algorithm : canFind;
 
@@ -12,7 +12,7 @@ unittest
     import std.random : uniform;
     import std.conv : to;
 
-    auto tmp = buildPath(tempDir, "hornet-" ~ uniform(100_000, 999_999).to!string);
+    auto tmp = buildPath(tempDir, "harness-" ~ uniform(100_000, 999_999).to!string);
     mkdirRecurse(tmp);
     scope (exit)
         if (exists(tmp))

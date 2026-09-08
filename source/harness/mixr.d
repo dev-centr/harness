@@ -1,6 +1,6 @@
-module hornet.mixr;
+module harness.mixr;
 
-import hornet.models;
+import harness.models;
 
 import core.time : seconds;
 
@@ -374,7 +374,7 @@ int availableRamMb()
 {
     import std.process : environment;
 
-    if (auto overrideMb = environment.get("HORNET_AVAIL_RAM_MB", null))
+    if (auto overrideMb = environment.get("HARNESS_AVAIL_RAM_MB", null))
     {
         try
             return overrideMb.to!int;

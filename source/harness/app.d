@@ -1,10 +1,10 @@
-module hornet.app;
+module harness.app;
 
-import hornet.rt;
-import hornet.mixr;
-import hornet.models;
-import hornet.server;
-import hornet.store;
+import harness.rt;
+import harness.mixr;
+import harness.models;
+import harness.server;
+import harness.store;
 
 import std.array : split;
 import std.conv : to;
@@ -47,7 +47,7 @@ int main(string[] args)
 int cmdInit(string[] args)
 {
     string chatRoot;
-    string title = "Hornet session";
+    string title = "Harness session";
     getopt(args, "title", &title);
     if (args.length < 2)
         return 1;
@@ -174,15 +174,15 @@ int cmdRoute(string[] args)
 
 void printUsage()
 {
-    writeln(`hornet — DevCentr actor-model harness (D + tgc)
+    writeln(`harness — DevCentr actor-model harness (D + tgc)
 
 Commands:
-  hornet init <chat-root> [--title=...]
-  hornet spawn <chat-root> --parent=... --type=task|discussion|disambiguation [--title=...]
-  hornet message <chat-root> --node=... --text=... [--propose-spawn]
-  hornet status <chat-root> --node=... --status=running|done|...
-  hornet graph <chat-root>
-  hornet serve <chat-root> [--port=8765] [--policy=balanced]
-  hornet route <chat-root> --node=... [--hint=...]
+  harness init <chat-root> [--title=...]
+  harness spawn <chat-root> --parent=... --type=task|discussion|disambiguation [--title=...]
+  harness message <chat-root> --node=... --text=... [--propose-spawn]
+  harness status <chat-root> --node=... --status=running|done|...
+  harness graph <chat-root>
+  harness serve <chat-root> [--port=8765] [--policy=balanced]
+  harness route <chat-root> --node=... [--hint=...]
 `);
 }

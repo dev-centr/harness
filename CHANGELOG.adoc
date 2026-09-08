@@ -1,6 +1,12 @@
 = Changelog
 :toc: preamble
 
+== 2026-09-08 — Harness rename
+
+* Renamed the project, D package/modules, CLI, desk, and provider identity from Hornet to Harness.
+* Renamed `HORNET_AVAIL_RAM_MB` to `HARNESS_AVAIL_RAM_MB`.
+* The repository moved from `dev-centr/hornet` to `dev-centr/harness`; GitHub redirects the old URL.
+
 == 2026-09-02 — OPR discovery cross-link
 
 * README Architecture notes link:https://github.com/dev-centr/uniprovider[UniProvider / Open Provider Registry] as the discovery layer Mixr should consume (not hard-coded single-runner detection).

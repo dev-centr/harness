@@ -14,6 +14,6 @@ tests/__pycache__/
 
 .dub/
 dub.selections.json
-hornet.exe
-hornet.pdb
+harness.exe
+harness.pdb
 *.obj

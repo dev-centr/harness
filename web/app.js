@@ -1,4 +1,4 @@
-/** Hornet desk — v1 grid + v2 temporal layout */
+/** Harness desk — v1 grid + v2 temporal layout */
 
 let selectedId = null;
 let graphData = { nodes: [] };

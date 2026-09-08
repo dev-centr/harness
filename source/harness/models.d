@@ -1,4 +1,4 @@
-module hornet.models;
+module harness.models;
 
 import std.json : JSONValue;
 

@@ -1,10 +1,10 @@
-module hornet.server;
+module harness.server;
 
-import hornet.mixr;
-import hornet.models;
-import hornet.store;
-import hornet.temporal;
-import hornet.waitgraph;
+import harness.mixr;
+import harness.models;
+import harness.store;
+import harness.temporal;
+import harness.waitgraph;
 
 import std.array : split;
 import std.algorithm : endsWith, startsWith;
@@ -30,7 +30,7 @@ void runServer(string chatRoot, string host = "127.0.0.1", ushort port = 8765, P
     ServerContext ctx;
     ctx.store.root = chatRoot;
     if (ctx.store.listNodeIds().length == 0)
-        ctx.store.initSession("Hornet desk");
+        ctx.store.initSession("Harness desk");
 
     if (ctx.store.loadAllNodes().length <= 1)
     {
@@ -58,7 +58,7 @@ void runServer(string chatRoot, string host = "127.0.0.1", ushort port = 8765, P
     scope (exit)
         listener.close();
 
-    writeln("Hornet desk http://", host, ":", port, "  chat_root=", chatRoot, "  (tgc via Tgc_default)");
+    writeln("Harness desk http://", host, ":", port, "  chat_root=", chatRoot, "  (tgc via Tgc_default)");
 
     for (;;)
     {
@@ -144,7 +144,7 @@ string handleRequest(ref ServerContext ctx, string req)
         {
             JSONValue o = JSONValue.emptyObject;
             o["ok"] = JSONValue(true);
-            o["name"] = JSONValue("hornet");
+            o["name"] = JSONValue("harness");
             o["version"] = JSONValue("0.5.0");
             o["mixr"] = ctx.mixr.statusJson();
             return jsonResponse(200, o);
@@ -267,7 +267,7 @@ string handleRequest(ref ServerContext ctx, string req)
         }
         if (path == "/api/provider/session")
         {
-            // t3code HornetDriver: map a remote thread to a discussion node under coordinator.
+            // t3code HarnessDriver: map a remote thread to a discussion node under coordinator.
             auto threadId = ("threadId" in j) ? j["threadId"].str : "";
             auto title = ("title" in j) ? j["title"].str : "t3-thread";
             if (!title.length)
@@ -310,11 +310,11 @@ string handleRequest(ref ServerContext ctx, string req)
             ctx.store.saveNode(node);
             ctx.store.setStatus(nodeId, NodeStatus.running, "t3 turn");
 
-            // Stub assistant until Hornet wires live provider completions.
+            // Stub assistant until Harness wires live provider completions.
             // Persists route metadata so t3code can stream a useful reply.
             import std.format : format;
             auto assistant = format(
-                "Mixr route → **%s** via `%s` (%s).\n\n%s\n\n_Hornet received your turn and persisted it on node `%s`. Live model invoke is next; this reply confirms the provider seam._",
+                "Mixr route → **%s** via `%s` (%s).\n\n%s\n\n_Harness received your turn and persisted it on node `%s`. Live model invoke is next; this reply confirms the provider seam._",
                 plan.model, plan.provider, plan.catalogKey, plan.reason, nodeId);
             ctx.store.appendChat(nodeId, ChatLine("assistant", assistant, cast(int) assistant.split.length));
             ctx.store.setStatus(nodeId, NodeStatus.idle, "awaiting next turn");
@@ -346,7 +346,7 @@ string handleRequest(ref ServerContext ctx, string req)
             choice["message"] = message;
             choice["finish_reason"] = JSONValue("stop");
             JSONValue o = JSONValue.emptyObject;
-            o["id"] = JSONValue("hornet-mixr");
+            o["id"] = JSONValue("harness-mixr");
             o["object"] = JSONValue("chat.completion");
             o["model"] = JSONValue(("model" in j) ? j["model"].str : plan.model);
             JSONValue choices = JSONValue.emptyArray;
