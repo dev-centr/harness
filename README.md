@@ -1,6 +1,21 @@
+<div id="top"></div>
+
+<div align="center">
+
 # Harness
 
-DevCentr's lightweight agent harness — **D only**, **tgc** (thread-local GC) enabled by default, persisted node graph on disk, **Mixr** model routing.
+Lightweight D agent runtime with persisted actor graphs, Mixr routing, and a local desk UI.
+
+<a href="https://github.com/dev-centr/harness/graphs/contributors"><img src="https://img.shields.io/github/contributors/dev-centr/harness" alt="Contributors"></a>
+<a href="https://github.com/dev-centr/harness/network/members"><img src="https://img.shields.io/github/forks/dev-centr/harness" alt="Forks"></a>
+<a href="https://github.com/dev-centr/harness/stargazers"><img src="https://img.shields.io/github/stars/dev-centr/harness" alt="Stars"></a>
+<a href="https://github.com/dev-centr/harness/issues"><img src="https://img.shields.io/github/issues/dev-centr/harness" alt="Issues"></a>
+
+[Explore the docs »](https://docs.devcentr.org/agent-rules/agent-harness.html)
+
+</div>
+
+Harness is **D only**, enables **tgc** (thread-local GC) by default, persists its node graph on disk, and uses **Mixr** for model routing.
 
 | Phase | Ships |
 | --- | --- |
@@ -10,9 +25,21 @@ DevCentr's lightweight agent harness — **D only**, **tgc** (thread-local GC) e
 | **v2** | Temporal layout engine — scrubber, fade, heatmap, scoped bookmarks |
 | **desk PM** | Status colors for `awaiting_user` / failed; **Mark completed** + **Archive** (`POST /api/hide`) |
 
+## Contents
+
+- [Changelog](#changelog)
+- [Build](#build)
+- [Quick start](#quick-start)
+- [Disk layout](#disk-layout)
+- [Harness configuration](#harness-configuration)
+- [Architecture](#architecture)
+- [Built with](#built-with)
+
 ## Changelog
 
 See [CHANGELOG.adoc](CHANGELOG.adoc).
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Build
 
@@ -24,6 +51,8 @@ dub build
 dub test
 ```
 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 ## Quick start
 
 ```powershell
@@ -33,6 +62,8 @@ dub test
 ```
 
 Open http://127.0.0.1:8765 for the desk UI.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Disk layout
 
@@ -47,9 +78,13 @@ $CHAT_ROOT/
   timeline/bookmarks.jsonl
 ```
 
-## Harness
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Harness configuration
 
 Set `HARNESS_NAME = harness` in `$CODE_ROOT/harness.md`.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Architecture
 
@@ -57,3 +92,18 @@ Set `HARNESS_NAME = harness` in `$CODE_ROOT/harness.md`.
 - **One-shot:** CLI subcommands touch disk directly (git-shaped); no Python, no embedded interpreter per invoke.
 - **tgc:** per-thread heaps; collections do not stop-the-world sibling threads — fits actor swarms + `@nogc` workers.
 - **Discovery vs routing:** [Open Provider Registry / UniProvider](https://github.com/dev-centr/uniprovider) finds endpoints; **Mixr** chooses models. Prefer OPR manifests over hard-coding a single local runner brand.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Built with
+
+**Runtime**
+
+- [D](https://dlang.org/) — native implementation
+- [tgc](https://github.com/dlang-supplemental/tgc) — thread-local garbage collection
+
+**Interface**
+
+- Browser-native HTML, CSS, and JavaScript — local desk UI
+
+<p align="right">(<a href="#top">back to top</a>)</p>
