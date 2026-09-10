@@ -422,7 +422,62 @@ window.addEventListener('resize', () => {
   if (viewMode === 'tree') drawTreeEdges();
 });
 
+function pqCellHeight(ms) {
+  const min = 22;
+  const max = 96;
+  return Math.round(Math.min(max, Math.max(min, min + (Number(ms) || 0) * 0.0002)));
+}
+
+async function loadPlanQueue() {
+  const cols = $('plan-queue-columns');
+  const meta = $('plan-queue-meta');
+  if (!cols) return;
+  try {
+    const data = await api('/api/plan-queue');
+    if (data.offline) {
+      meta.textContent = 'plan-stackd offline · :17358';
+      cols.innerHTML = '<p class="pq-empty">Start plan-stackd for the speculative wait queue.</p>';
+      return;
+    }
+    meta.textContent = 'live · client devcentr-harness';
+    cols.innerHTML = '';
+    const windows = data.overview?.windows || [];
+    const sessions = [];
+    for (const win of windows) {
+      for (const sess of win.sessions || []) {
+        sessions.push({ ...sess, harnessLabel: win.label || win.harnessId });
+      }
+    }
+    if (!sessions.length) {
+      cols.innerHTML = '<p class="pq-empty">No plans yet — <code>plan-stack seed</code>.</p>';
+      return;
+    }
+    for (const sess of sessions) {
+      const col = document.createElement('div');
+      col.className = 'pq-col';
+      const head = document.createElement('div');
+      head.className = 'pq-col-title';
+      head.textContent = `${sess.harnessLabel} / ${sess.title || sess.sessionId}`;
+      col.appendChild(head);
+      for (const ph of sess.phases || []) {
+        const el = document.createElement('div');
+        el.className = 'pq-phase';
+        el.dataset.status = ph.status;
+        el.style.minHeight = `${pqCellHeight(ph.estimatedWaitMs)}px`;
+        el.textContent = ph.title;
+        col.appendChild(el);
+      }
+      cols.appendChild(col);
+    }
+  } catch (err) {
+    meta.textContent = 'error';
+    cols.innerHTML = `<p class="pq-empty">${String(err.message || err)}</p>`;
+  }
+}
+
 setViewMode('linear');
 loadGraph();
 loadTemporal();
+loadPlanQueue();
 setInterval(loadGraph, 8000);
+setInterval(loadPlanQueue, 3000);

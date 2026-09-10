@@ -13,7 +13,8 @@
   2. Workers panel — task tiles (status + live summary mailbox). Full worker
      transcript only in the fork panel on drill-in.
   3. Temporal scrubber — cross-cutting; available in every view mode (not a 4th mode).
-  4. View modes: Linear | Grid | Tree (shell toggle).
+  4. Plan-queue panel — cross-cutting speculative wait stack (plan-stack daemon); not a 4th mode.
+  5. View modes: Linear | Grid | Tree (shell toggle).
 -->
 <body data-view="linear">
   <header class="shell-bar">
@@ -94,6 +95,15 @@
       <button type="submit">Send</button>
     </form>
   </aside>
+
+  <!-- Speculative plan queue — cross-cutting; proxies plan-stack (not a view mode) -->
+  <section class="plan-queue-panel" id="plan-queue-panel" aria-label="Speculative plan queue">
+    <div class="plan-queue-header">
+      <span>Plan stack</span>
+      <span class="plan-queue-meta" id="plan-queue-meta">plan-stackd…</span>
+    </div>
+    <div class="plan-queue-columns" id="plan-queue-columns"></div>
+  </section>
 
   <!-- Temporal scrubber — global or subtree scope; present in all view modes -->
   <section class="temporal-panel" id="temporal-panel" aria-label="Timeline">

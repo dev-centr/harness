@@ -25,6 +25,7 @@ Harness is **D only**, enables **tgc** (thread-local GC) by default, persists it
 | **v2** | Temporal layout engine — scrubber, fade, heatmap, scoped bookmarks |
 | **desk PM** | Status colors for `awaiting_user` / failed; **Mark completed** + **Archive** (`POST /api/hide`) |
 | **desk views** | **Linear** / **Grid** / **Tree** — discussion vs workers separation; fork drill-in for full node transcript |
+| **plan queue** | Cross-cutting **plan-stack** dock (`GET /api/plan-queue`) — ETA-sized speculative waits; not a 4th view mode |
 
 ## Contents
 
@@ -62,7 +63,7 @@ dub test
 .\harness.exe serve .\my-chat --port=8765
 ```
 
-Open http://127.0.0.1:8765 for the desk UI. Toggle **Linear**, **Grid**, or **Tree** in the shell bar — discussion chat stays in the main panel; task workers live in the workers region (or the tree canvas in Tree mode). The timeline scrubber works in every mode.
+Open http://127.0.0.1:8765 for the desk UI. Toggle **Linear**, **Grid**, or **Tree** in the shell bar — discussion chat stays in the main panel; task workers live in the workers region (or the tree canvas in Tree mode). The timeline scrubber and **plan-stack** dock work in every mode (start [plan-stackd](https://github.com/dev-centr/plan-stack) on `:17358` for live queues).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

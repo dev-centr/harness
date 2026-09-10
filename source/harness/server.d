@@ -3,6 +3,7 @@ module harness.server;
 import harness.closeout : closeoutPayload;
 import harness.mixr;
 import harness.models;
+import harness.planstack;
 import harness.store;
 import harness.temporal;
 import harness.waitgraph;
@@ -140,6 +141,11 @@ string handleRequest(ref ServerContext ctx, string req)
             string at = queryParam(query, "at", "");
             double zoom = queryParam(query, "zoom", "1").to!double;
             return jsonResponse(200, ctx.temporal.snapshot(viewScope, at, zoom));
+        }
+        if (path == "/api/plan-queue")
+        {
+            // Cross-cutting speculative plan stack — proxies plan-stackd (not a 4th view mode).
+            return jsonResponse(200, fetchOverview());
         }
         if (path == "/api/health" || path == "/health")
         {

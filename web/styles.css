@@ -496,6 +496,73 @@ body[data-view="grid"] .workers-grid {
 
 .fork-lines { max-height: 12rem; }
 
+/* ── Plan queue (cross-cutting; plan-stack daemon) ── */
+.plan-queue-panel {
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  padding: 0.55rem 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.plan-queue-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.45rem;
+}
+
+.plan-queue-meta {
+  font-size: 0.72rem;
+  opacity: 0.7;
+}
+
+.plan-queue-columns {
+  display: flex;
+  gap: 0.55rem;
+  overflow-x: auto;
+  min-height: 5.5rem;
+  padding-bottom: 0.25rem;
+}
+
+.pq-col {
+  flex: 0 0 8.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.pq-col-title {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.65;
+}
+
+.pq-phase {
+  border: 1px solid var(--line);
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.35rem;
+  font-size: 0.72rem;
+  background: rgba(0, 0, 0, 0.15);
+  min-height: 1.6rem;
+  overflow: hidden;
+}
+
+.pq-phase[data-status="waiting"] { border-left: 2px solid #c47a2c; }
+.pq-phase[data-status="active"] { border-left: 2px solid #6eb5ff; }
+.pq-phase[data-status="done"] { border-left: 2px solid #4a7c59; opacity: 0.65; }
+.pq-phase[data-status="failed"] { border-left: 2px solid #e07a6a; }
+.pq-phase[data-status="recalculating"] { border-left: 2px solid #b794f6; }
+.pq-phase[data-status="invalidated"] { opacity: 0.4; text-decoration: line-through; }
+
+.pq-empty {
+  font-size: 0.75rem;
+  opacity: 0.65;
+  padding: 0.35rem 0;
+}
+
 /* ── Temporal (cross-cutting) ── */
 .temporal-panel {
   border: 1px solid var(--line);

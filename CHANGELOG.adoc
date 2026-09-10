@@ -1,6 +1,12 @@
 = Changelog
 :toc: preamble
 
+== 2026-09-10 — Plan-stack dock panel
+
+* Added cross-cutting **Plan stack** panel (above the temporal scrubber) — not a Linear/Grid/Tree peer.
+* `GET /api/plan-queue` proxies [plan-stack](https://github.com/dev-centr/plan-stack) overview (`127.0.0.1:17358`); desk shows offline hint when the daemon is down.
+* Client id for waits/plans: `devcentr-harness`.
+
 == 2026-09-10 — Desk view modes (Linear / Grid / Tree)
 
 * Rebuilt the desk UI to lock **discussion cadence** (main chat) vs **work cadence** (workers mailbox + fork drill-in).
