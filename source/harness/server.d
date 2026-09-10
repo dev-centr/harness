@@ -1,5 +1,6 @@
 module harness.server;
 
+import harness.closeout : closeoutPayload;
 import harness.mixr;
 import harness.models;
 import harness.store;
@@ -204,6 +205,7 @@ string handleRequest(ref ServerContext ctx, string req)
             JSONValue o = JSONValue.emptyObject;
             o["node"] = child.toJson();
             o["route"] = plan.toJson();
+            o["closeout"] = closeoutPayload(child);
             return jsonResponse(200, o);
         }
         if (path == "/api/status")
@@ -296,6 +298,7 @@ string handleRequest(ref ServerContext ctx, string req)
             o["title"] = JSONValue(node.title.length ? node.title : title);
             o["mixrModel"] = JSONValue(node.mixrModel);
             o["mixrReason"] = JSONValue(node.mixrReason);
+            o["closeout"] = closeoutPayload(node);
             return jsonResponse(200, o);
         }
         if (path == "/api/provider/turn")
@@ -323,6 +326,7 @@ string handleRequest(ref ServerContext ctx, string req)
             o["sessionId"] = JSONValue(nodeId);
             o["assistantText"] = JSONValue(assistant);
             o["route"] = plan.toJson();
+            o["closeout"] = closeoutPayload(node);
             return jsonResponse(200, o);
         }
         if (path == "/v1/chat/completions")

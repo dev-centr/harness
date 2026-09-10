@@ -26,6 +26,15 @@ enum WaitMode : string
     enforce = "enforce",
 }
 
+/// Who may push after parallel / swarm work (agent-rules parallel-git-closeout).
+enum GitCloseout : string
+{
+    commitOnly = "commit-only",
+    coordinatorBatch = "coordinator-batch",
+    perNode = "per-node",
+    off = "off",
+}
+
 struct WaitOn
 {
     string node;
@@ -58,6 +67,7 @@ struct NodeRecord
     string lastTouchedAt;
     string createdAt;
     WaitOn[] waitOn;
+    GitCloseout gitCloseout = GitCloseout.coordinatorBatch;
 
     JSONValue toJson() const
     {
@@ -99,6 +109,7 @@ struct NodeRecord
             }
             o["waitOn"] = wa;
         }
+        o["gitCloseout"] = JSONValue(cast(string) gitCloseout);
         return o;
     }
 
@@ -138,6 +149,8 @@ struct NodeRecord
         if ("waitOn" in j)
             foreach (w; j["waitOn"].array)
                 n.waitOn ~= WaitOn(w["node"].str, cast(WaitMode) w["mode"].str);
+        if ("gitCloseout" in j)
+            n.gitCloseout = cast(GitCloseout) j["gitCloseout"].str;
         return n;
     }
 }

@@ -1,6 +1,13 @@
 = Changelog
 :toc: preamble
 
+== 2026-09-10 — Deferred push for parallel task nodes
+
+* Added `GitCloseout` on each node (`commit-only`, `coordinator-batch`, `per-node`, `off`).
+* Task / discussion leaves default to **coordinator-batch** / **commit-only**; coordinator stays **per-node** (owns wave-end push).
+* Spawn writes a `system` close-out brief into `chat.jsonl` and returns `closeout` on `/api/spawn` and `/api/provider/session|turn` so inherited always-on push rules cannot silently win.
+* Cuts remote CI rebuild storms when many workers would otherwise each `git push`.
+
 == 2026-09-08 — Harness rename
 
 * Renamed the project, D package/modules, CLI, desk, and provider identity from Hornet to Harness.

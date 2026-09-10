@@ -1,5 +1,6 @@
 module harness.store;
 
+import harness.closeout : closeoutSystemAddendum, countNonTerminalTasks, defaultCloseout;
 import harness.models;
 
 import std.array : split;
@@ -198,6 +199,7 @@ struct ChatStore
         coord.createdAt = now;
         coord.lastEventAt = now;
         coord.lastTouchedAt = now;
+        coord.gitCloseout = GitCloseout.perNode; // wave-end push owner
         saveNode(coord);
         graph.root = coord.id;
         graph.nodes = JSONValue.emptyObject;
@@ -245,7 +247,16 @@ struct ChatStore
         child.createdAt = now;
         child.lastEventAt = now;
         child.lastTouchedAt = now;
+
+        // Assign before save so meta.json carries close-out for providers / models.
+        auto peers = loadAllNodes();
+        peers ~= child;
+        child.gitCloseout = defaultCloseout(child.type, countNonTerminalTasks(peers));
         saveNode(child);
+
+        // Persist the brief in the child transcript so copied always-on push
+        // rules cannot silently win when a provider loads chat.jsonl only.
+        appendChat(nodeId, ChatLine("system", closeoutSystemAddendum(child.gitCloseout), 0));
 
         parent.spawned ~= nodeId;
         parent.lastEventAt = now;

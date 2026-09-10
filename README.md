@@ -84,6 +84,14 @@ $CHAT_ROOT/
 
 Set `HARNESS_NAME = harness` in `$CODE_ROOT/harness.md`.
 
+Parallel / swarm close-out (see agent-rules `general/parallel-git-closeout.md`):
+
+```text
+GIT_CLOSEOUT = coordinator-batch
+```
+
+Task nodes spawn with `gitCloseout=coordinator-batch` and a system brief: **commit locally, do not push**; the coordinator batches push after the wave.
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Architecture
