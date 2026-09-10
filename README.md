@@ -24,6 +24,7 @@ Harness is **D only**, enables **tgc** (thread-local GC) by default, persists it
 | **v1** | Mixr router, wait-graph (`warn` default), HTTP desk (`harness serve`) |
 | **v2** | Temporal layout engine — scrubber, fade, heatmap, scoped bookmarks |
 | **desk PM** | Status colors for `awaiting_user` / failed; **Mark completed** + **Archive** (`POST /api/hide`) |
+| **desk views** | **Linear** / **Grid** / **Tree** — discussion vs workers separation; fork drill-in for full node transcript |
 
 ## Contents
 
@@ -61,7 +62,7 @@ dub test
 .\harness.exe serve .\my-chat --port=8765
 ```
 
-Open http://127.0.0.1:8765 for the desk UI.
+Open http://127.0.0.1:8765 for the desk UI. Toggle **Linear**, **Grid**, or **Tree** in the shell bar — discussion chat stays in the main panel; task workers live in the workers region (or the tree canvas in Tree mode). The timeline scrubber works in every mode.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

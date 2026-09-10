@@ -1,6 +1,12 @@
 = Changelog
 :toc: preamble
 
+== 2026-09-10 — Desk view modes (Linear / Grid / Tree)
+
+* Rebuilt the desk UI to lock **discussion cadence** (main chat) vs **work cadence** (workers mailbox + fork drill-in).
+* Three shell view modes: **Linear** (Cursor-like discussion sidebar + transcript), **Grid** (spatial task tiles + visible discussion), **Tree** (L→R spawn tree with `+` → `POST /api/spawn`).
+* Temporal scrubber stays cross-cutting (global or subtree scope) across all modes; removed the old serialized wall toggle.
+
 == 2026-09-10 — Deferred push for parallel task nodes
 
 * Added `GitCloseout` on each node (`commit-only`, `coordinator-batch`, `per-node`, `off`).

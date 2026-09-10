@@ -6,25 +6,77 @@
   <title>Harness desk</title>
   <link rel="stylesheet" href="/static/styles.css" />
 </head>
-<body>
+<!--
+  UX contract (discussion vs work):
+  1. Main chat panel — discussion cadence only (coordinator + discussion nodes).
+     User Q&A lives here; worker tool noise must NOT appear as chat lines.
+  2. Workers panel — task tiles (status + live summary mailbox). Full worker
+     transcript only in the fork panel on drill-in.
+  3. Temporal scrubber — cross-cutting; available in every view mode (not a 4th mode).
+  4. View modes: Linear | Grid | Tree (shell toggle).
+-->
+<body data-view="linear">
   <header class="shell-bar">
     <div class="shell-identity">
       <span class="shell-label">Harness</span>
       <strong id="run-chip">coordinator</strong>
     </div>
     <div class="shell-controls">
-      <label class="mode-toggle"><input type="checkbox" id="serialized-mode" /> Serialized (old wall)</label>
+      <div class="view-mode" role="group" aria-label="View mode">
+        <button type="button" class="view-mode-btn is-active" data-view="linear">Linear</button>
+        <button type="button" class="view-mode-btn" data-view="grid">Grid</button>
+        <button type="button" class="view-mode-btn" data-view="tree">Tree</button>
+      </div>
       <button type="button" id="btn-spawn-task" class="epoch-btn">Spawn task</button>
     </div>
   </header>
 
-  <p class="lineage-strip" id="lineage-strip">Spawn: coordinator → task nodes</p>
+  <div class="desk-shell">
+    <!-- Linear: sidebar of discussion nodes (not tasks) -->
+    <nav class="discussion-nav" id="discussion-nav" aria-label="Discussion threads">
+      <span class="panel-label">Discussion</span>
+      <ul class="discussion-list" id="discussion-list"></ul>
+    </nav>
 
-  <section class="inbox-region" id="inbox-region" aria-label="Task node grid">
-    <div class="inbox-grid" id="inbox-grid" role="list"></div>
-  </section>
+    <div class="desk-main">
+      <!-- Discussion cadence — real chat from /api/nodes/{id}/chat; never worker transcripts -->
+      <section class="discussion-panel" aria-label="Main discussion">
+        <div class="chat-header">
+          <span class="chat-title" id="chat-title">Coordinator</span>
+          <span class="chat-meta" id="thread-meta">Discussion cadence</span>
+        </div>
+        <ol class="chat-lines" id="main-lines" aria-live="polite"></ol>
+        <form class="main-compose" id="main-compose">
+          <input type="text" id="main-input" placeholder="Message coordinator…" autocomplete="off" />
+          <button type="submit">Send</button>
+        </form>
+      </section>
 
-  <aside class="fork-panel" id="fork-panel" aria-label="Node fork chat">
+      <!-- Work cadence — task mailbox; full transcript only in fork panel -->
+      <section class="workers-panel" id="workers-panel" aria-label="Workers">
+        <div class="workers-header">
+          <span class="panel-label">Workers</span>
+          <span class="workers-meta" id="workers-meta"></span>
+        </div>
+        <div class="workers-grid" id="workers-grid" role="list"></div>
+      </section>
+
+      <!-- Tree mode replaces workers grid with spawn/dependency canvas -->
+      <section class="tree-panel" id="tree-panel" aria-label="Spawn tree" hidden>
+        <div class="tree-header">
+          <span class="panel-label">Spawn tree</span>
+          <span class="tree-meta" id="tree-meta">Click a node to open fork · + spawns a child</span>
+        </div>
+        <div class="tree-scroll">
+          <svg class="tree-edges" id="tree-edges" aria-hidden="true"></svg>
+          <div class="tree-columns" id="tree-columns"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Drill-in: full transcript for any selected node (task or discussion) -->
+  <aside class="fork-panel is-hidden" id="fork-panel" aria-label="Node fork chat">
     <div class="fork-header">
       <button type="button" id="fork-close" class="fork-close" aria-label="Close fork">×</button>
       <div>
@@ -43,6 +95,7 @@
     </form>
   </aside>
 
+  <!-- Temporal scrubber — global or subtree scope; present in all view modes -->
   <section class="temporal-panel" id="temporal-panel" aria-label="Timeline">
     <div class="temporal-header">
       <span>Timeline</span>
@@ -56,15 +109,7 @@
     <ul class="timeline-bookmarks" id="timeline-bookmarks"></ul>
   </section>
 
-  <section class="main-thread" aria-label="Coordinator chat">
-    <div class="chat-header">
-      <span class="chat-title">Coordinator</span>
-      <span class="chat-meta" id="thread-meta">Mixr-routed summaries</span>
-    </div>
-    <ol class="chat-lines" id="main-lines" aria-live="polite"></ol>
-  </section>
-
-  <p class="bus-strip" id="bus-strip" role="status">Grid mode — cards update in place.</p>
+  <p class="status-strip" id="status-strip" role="status">Linear — discussion in center, tasks in workers strip.</p>
 
   <script src="/static/app.js" type="module"></script>
 </body>
