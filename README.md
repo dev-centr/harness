@@ -11,7 +11,7 @@ Lightweight D agent runtime with persisted actor graphs, Mixr routing, and a loc
 <a href="https://github.com/dev-centr/harness/stargazers"><img src="https://img.shields.io/github/stars/dev-centr/harness" alt="Stars"></a>
 <a href="https://github.com/dev-centr/harness/issues"><img src="https://img.shields.io/github/issues/dev-centr/harness" alt="Issues"></a>
 
-[Explore the docs »](https://docs.devcentr.org/agent-rules/agent-harness.html)
+[Explore the docs »](https://docs.devcentr.org/tools/agent-rules/agent-harness/)
 
 </div>
 
@@ -69,7 +69,7 @@ Open http://127.0.0.1:8765 for the desk UI. Toggle **Linear**, **Grid**, or **Tr
 
 ## Disk layout
 
-Matches [actor-model-agentic-ui](https://docs.devcentr.org/agent-rules/actor-model-agentic-ui.html):
+Matches [actor-model-agentic-ui](https://docs.devcentr.org/tools/agent-rules/actor-model-agentic-ui/):
 
 ```
 $CHAT_ROOT/

@@ -1,6 +1,10 @@
 = Changelog
 :toc: preamble
 
+== 2026-09-26 -- Docs URLs under Tools forest
+
+* Point README docs links at `/tools/agent-rules/` (Agent Rules folded out of standalone `/agent-rules/`).
+
 == 2026-09-10 — Plan-stack dock panel
 
 * Added cross-cutting **Plan stack** panel (above the temporal scrubber) — not a Linear/Grid/Tree peer.
