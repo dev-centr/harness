@@ -17,3 +17,8 @@ dub.selections.json
 harness.exe
 harness.pdb
 *.obj
+!/.github/
+!/.github/workflows/
+!/.github/workflows/encoding-guard.yml
+!/.editorconfig
+!/.gitattributes
