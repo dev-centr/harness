@@ -1,0 +1,5 @@
+= 2026-11-08
+
+== Observed producer identity per event
+
+Per-event producer identity is caller-reported and independent of Mixr plans. Missing fields in old logs remain unattributed. Git AI mappings are optional, explicit and validated. The edit endpoint records a summary, not a filesystem mutation. See link:../docs/who-produced-each-event.adoc[reference].

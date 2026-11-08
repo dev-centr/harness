@@ -119,6 +119,9 @@ struct ChatStore
 
     size_t appendChat(string nodeId, ChatLine line)
     {
+        line.producingAgent.validate();
+        import std.exception : enforce;
+        enforce(line.eventKind == "message" || line.eventKind == "edit", "event.kind");
         auto nd = nodeDir(nodeId);
         mkdirRecurse(nd);
         auto chatPath = buildPath(nd, "chat.jsonl");
@@ -131,6 +134,8 @@ struct ChatStore
         }
         auto at = utcNow();
         JSONValue rec = JSONValue.emptyObject;
+        rec["event_kind"] = JSONValue(line.eventKind);
+        if (line.producingAgent.present) rec["producing_agent"] = line.producingAgent.toJson();
         rec["role"] = JSONValue(line.role);
         rec["text"] = JSONValue(line.text);
         rec["tokens"] = JSONValue(line.tokens);

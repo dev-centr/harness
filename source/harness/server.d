@@ -178,15 +178,18 @@ string handleRequest(ref ServerContext ctx, string req)
     else if (method == "POST")
     {
         auto j = body.length ? parseJSON(body) : JSONValue.emptyObject;
-        if (path == "/api/message")
+        if (path == "/api/message" || path == "/api/edit-event")
         {
             auto nodeId = j["nodeId"].str;
             auto text = j["text"].str;
             auto role = ("role" in j) ? j["role"].str : "user";
-            auto lineNo = ctx.store.appendChat(nodeId, ChatLine(role, text, cast(int) text.split.length));
+            auto event = ChatLine(role, text, cast(int) text.split.length);
+            if ("producing_agent" in j) event.producingAgent = ProducingAgent.fromJson(j["producing_agent"]);
+            if (path == "/api/edit-event") event.eventKind = "edit";
+            auto lineNo = ctx.store.appendChat(nodeId, event);
             JSONValue o = JSONValue.emptyObject;
             o["line"] = JSONValue(lineNo);
-            if (role == "user")
+            if (role == "user" && event.eventKind == "message")
             {
                 NodeRecord spawned;
                 if (ctx.store.proposeSpawnFromMessage(nodeId, text, spawned))

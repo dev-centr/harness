@@ -1,0 +1,22 @@
+= Who produced each event
+
+A routing recommendation does not prove which model wrote a message or edit. Harness stores an optional observed producer on each append-only event, independently of a node's mutable `mixrModel` routing plan.
+
+== Caller contract
+
+`POST /api/message` accepts `producing_agent` with required independent open strings `tool`, `id` (actual producer conversation/session), and `model` (exact producing model, or `unknown`). Supply them only after observing production; do not copy a recommendation from Mixr. Existing callers may omit the object and remain unattributed. Unknown future tool/model identifiers are retained.
+
+[source,json]
+----
+{"nodeId":"task-id","role":"assistant","text":"Completed an edit","producing_agent":{"tool":"future-harness","id":"conversation-123","model":"unknown","git_ai_session_id":"s_0123456789abcd","git_ai_trace_id":"t_abcdef01234567"}}
+----
+
+`POST /api/edit-event` uses the same body to append an edit event (`event_kind: edit`); it records an observed edit summary, not a request to mutate a file. Message events have `event_kind: message`. Edit events do not trigger discussion spawning.
+
+The optional Git AI session and trace fields are explicit mappings, not a reinterpretation of the Harness node ID. A trace requires a session. The current wire grammar is `s_`/`t_` followed by 14 hexadecimal characters. The actual producer conversation ID remains separate from the hashed Git AI key.
+
+== Persistence and compatibility
+
+`chat.jsonl` persists the producing identity with the event. Rerouting a node cannot rewrite earlier events. Missing producer fields in older logs remain missing; `ChatLine.fromJson` defaults missing `event_kind` to `message`. Partial identity objects and invalid mapping keys are rejected before append. The existing provider completion seam is a stub and must not invent observed model identity from its routing output.
+
+This is caller-reported evidence, not cryptographic verification. Local logs may contain private session identifiers; do not publish them wholesale. No transcript is fetched and no Git AI checkpoint is written. The temporary `ProducingAgent` type is local to Harness and should be replaced by the shared `git-ai-provenance` types after registry/dependency wiring is approved. No path dependency was added.

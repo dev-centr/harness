@@ -22,3 +22,8 @@ harness.pdb
 !/.github/workflows/encoding-guard.yml
 !/.editorconfig
 !/.gitattributes
+
+!docs/
+!docs/**
+!changelog-details/
+!changelog-details/**

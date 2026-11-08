@@ -41,11 +41,70 @@ struct WaitOn
     WaitMode mode = WaitMode.warn;
 }
 
+/// Temporary local wire type: replace with git-ai-provenance once dependency wiring is approved.
+/// The caller reports observed production, never the planned Mixr routing choice.
+struct ProducingAgent
+{
+    string tool;
+    string id;
+    string model;
+    string gitAiSessionId;
+    string gitAiTraceId;
+
+    bool present() const { return tool.length || id.length || model.length || gitAiSessionId.length || gitAiTraceId.length; }
+    void validate() const
+    {
+        import std.exception : enforce;
+        enforce(!present || (tool.length && id.length && model.length), "producer.identity_required");
+        bool key(string value, string prefix) {
+            if (value.length != 16 || value[0..2] != prefix) return false;
+            foreach(c;value[2..$]) if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))) return false;
+            return true;
+        }
+        enforce(!gitAiSessionId.length || key(gitAiSessionId,"s_"), "producer.session_key");
+        enforce(!gitAiTraceId.length || (gitAiSessionId.length && key(gitAiTraceId,"t_")), "producer.trace_key");
+    }
+    JSONValue toJson() const
+    {
+        validate();
+        JSONValue j = JSONValue.emptyObject;
+        j["tool"] = JSONValue(tool); j["id"] = JSONValue(id); j["model"] = JSONValue(model);
+        if (gitAiSessionId.length) j["git_ai_session_id"] = JSONValue(gitAiSessionId);
+        if (gitAiTraceId.length) j["git_ai_trace_id"] = JSONValue(gitAiTraceId);
+        return j;
+    }
+    static ProducingAgent fromJson(JSONValue j)
+    {
+        import std.json : JSONType;
+        import std.exception : enforce;
+        enforce(j.type == JSONType.object,"producer.object_required");
+        ProducingAgent p;
+        foreach(k;["tool","id","model"]) enforce((k in j.object) !is null && j[k].type == JSONType.string,"producer.identity_required");
+        p.tool=j["tool"].str; p.id=j["id"].str; p.model=j["model"].str;
+        if ("git_ai_session_id" in j) p.gitAiSessionId=j["git_ai_session_id"].str;
+        if ("git_ai_trace_id" in j) p.gitAiTraceId=j["git_ai_trace_id"].str;
+        p.validate();
+        enforce(p.present,"producer.identity_required");
+        return p;
+    }
+}
+
 struct ChatLine
 {
     string role;
     string text;
     int tokens;
+    ProducingAgent producingAgent;
+    string eventKind = "message";
+
+    static ChatLine fromJson(JSONValue j)
+    {
+        ChatLine l;
+        l.role=j["role"].str; l.text=j["text"].str; l.tokens=cast(int) j["tokens"].integer;
+        if ("producing_agent" in j) l.producingAgent=ProducingAgent.fromJson(j["producing_agent"]);
+        if ("event_kind" in j) l.eventKind=j["event_kind"].str;
+        return l;
+    }
 }
 
 struct NodeRecord

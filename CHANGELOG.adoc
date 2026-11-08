@@ -1,40 +1,59 @@
 = Changelog
 :toc: preamble
+:toclevels: 3
 
-== 2026-09-26 -- Docs URLs under Tools forest
+== 2026-11-08
+
+=== Observed producer identity per event
+
+* Persist actual harness/session/model and explicit Git AI mappings without inferring them from routing plans.
+* Keep old chat records readable and add an append-only edit-event endpoint.
+* link:changelog-details/2026-11-08 - observed-producer.adoc[Details]
+
+== 2026-09-26
+
+=== Docs URLs under Tools forest
 
 * Point README docs links at `/tools/agent-rules/` (Agent Rules folded out of standalone `/agent-rules/`).
 
-== 2026-09-10 — Plan-stack dock panel
+== 2026-09-10
+
+=== Plan-stack dock panel
 
 * Added cross-cutting **Plan stack** panel (above the temporal scrubber) — not a Linear/Grid/Tree peer.
 * `GET /api/plan-queue` proxies [plan-stack](https://github.com/dev-centr/plan-stack) overview (`127.0.0.1:17358`); desk shows offline hint when the daemon is down.
 * Client id for waits/plans: `devcentr-harness`.
 
-== 2026-09-10 — Desk view modes (Linear / Grid / Tree)
+=== Desk view modes (Linear / Grid / Tree)
 
 * Rebuilt the desk UI to lock **discussion cadence** (main chat) vs **work cadence** (workers mailbox + fork drill-in).
 * Three shell view modes: **Linear** (Cursor-like discussion sidebar + transcript), **Grid** (spatial task tiles + visible discussion), **Tree** (L→R spawn tree with `+` → `POST /api/spawn`).
 * Temporal scrubber stays cross-cutting (global or subtree scope) across all modes; removed the old serialized wall toggle.
 
-== 2026-09-10 — Deferred push for parallel task nodes
+=== Deferred push for parallel task nodes
 
 * Added `GitCloseout` on each node (`commit-only`, `coordinator-batch`, `per-node`, `off`).
 * Task / discussion leaves default to **coordinator-batch** / **commit-only**; coordinator stays **per-node** (owns wave-end push).
 * Spawn writes a `system` close-out brief into `chat.jsonl` and returns `closeout` on `/api/spawn` and `/api/provider/session|turn` so inherited always-on push rules cannot silently win.
 * Cuts remote CI rebuild storms when many workers would otherwise each `git push`.
 
-== 2026-09-08 — Harness rename
+== 2026-09-08
+
+=== Harness rename
 
 * Renamed the project, D package/modules, CLI, desk, and provider identity from Hornet to Harness.
 * Renamed `HORNET_AVAIL_RAM_MB` to `HARNESS_AVAIL_RAM_MB`.
 * The repository moved from `dev-centr/hornet` to `dev-centr/harness`; GitHub redirects the old URL.
 
-== 2026-09-02 — OPR discovery cross-link
+== 2026-09-02
+
+=== OPR discovery cross-link
 
 * README Architecture notes link:https://github.com/dev-centr/uniprovider[UniProvider / Open Provider Registry] as the discovery layer Mixr should consume (not hard-coded single-runner detection).
 
-== 2026-08-30 — Mixr 0.5 cost routing + t3code provider seam
+== 2026-08-30
+
+=== Mixr 0.5 cost routing + t3code provider seam
 
 * Mixr catalog drops Anthropic defaults; GLM / MiniMax / Kimi / DeepSeek tiers; suppress lists.
 * On-device router call via local OpenAI-compat URL; RAM/unreachable failover; `HORNET_AVAIL_RAM_MB` override.

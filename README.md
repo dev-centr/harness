@@ -117,3 +117,7 @@ Task nodes spawn with `gitCloseout=coordinator-batch` and a system brief: **comm
 - Browser-native HTML, CSS, and JavaScript — local desk UI
 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+## Observed producing identity
+
+See [Who produced each event](docs/who-produced-each-event.adoc) for per-message/edit identity and explicit Git AI mapping, separate from planned routing.
