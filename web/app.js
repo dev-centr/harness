@@ -475,7 +475,72 @@ async function loadPlanQueue() {
   }
 }
 
+function renderEnvHealth(data) {
+  const banner = $('env-alert');
+  if (!banner || !data) return;
+  const shouldAlert = data.status === 'fixed' || data.status === 'error';
+  if (!shouldAlert) {
+    banner.hidden = true;
+    return;
+  }
+
+  const isError = data.status === 'error';
+  banner.classList.toggle('is-error', isError);
+  banner.classList.toggle('is-fixed', !isError);
+  $('env-alert-title').textContent = isError
+    ? 'Windows PATH truncation check failed'
+    : 'Windows PATH truncation detected and repaired for this process';
+  $('env-alert-badge').textContent = isError ? 'Action needed' : 'Auto-fixed';
+  $('env-alert-summary').textContent =
+    data.summary ||
+    (isError
+      ? data.errorMessage || 'Could not inspect or repair Windows PATH.'
+      : 'Windows truncated PATH on launch; Harness restored Machine + User PATH from Registry.');
+
+  const link = $('env-alert-link');
+  if (link && data.detailsUrl) link.href = data.detailsUrl;
+
+  const details = $('env-alert-details');
+  const list = $('env-alert-list');
+  const sample = Array.isArray(data.droppedSample) ? data.droppedSample : [];
+  if (details && list && sample.length > 0) {
+    const more = data.droppedCount > sample.length ? ` (showing ${sample.length} of ${data.droppedCount})` : '';
+    const dupeNote = data.duplicateCount > 0 ? ` · ${data.duplicateCount} Registry duplicate${data.duplicateCount === 1 ? '' : 's'}` : '';
+    $('env-alert-details-summary').textContent = `Dropped PATH entries${more}${dupeNote}`;
+    list.innerHTML = sample.map((p) => `<li>${esc(p)}</li>`).join('');
+    details.hidden = false;
+  } else if (details) {
+    details.hidden = true;
+  }
+
+  banner.hidden = false;
+}
+
+async function loadEnvHealth() {
+  try {
+    const data = await api('/api/env-health');
+    renderEnvHealth(data);
+  } catch {
+    // Non-fatal: desk UI still loads when older server lacks /api/env-health.
+  }
+}
+
+$('env-alert-dismiss')?.addEventListener('click', () => {
+  const banner = $('env-alert');
+  if (banner) banner.hidden = true;
+});
+
+$('env-alert-recheck')?.addEventListener('click', async () => {
+  try {
+    const data = await api('/api/env-health/recheck', { method: 'POST', body: '{}' });
+    renderEnvHealth(data);
+  } catch {
+    // Ignore transient recheck failures.
+  }
+});
+
 setViewMode('linear');
+loadEnvHealth();
 loadGraph();
 loadTemporal();
 loadPlanQueue();

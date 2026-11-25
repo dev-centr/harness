@@ -1,0 +1,14 @@
+= Windows PATH truncation detection, auto-repair, and UI alert
+
+Windows Explorer and legacy launchers silently truncate `PATH` or drop the entire `User` `PATH` when the expanded value exceeds ~2,047 characters. Harness now detects and repairs this natively on launch and surfaces the result to the user.
+
+== What changed
+
+* Added `source/harness/pathcheck.d`:
+** Reads `HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\Path` and `HKCU\Environment\Path` via Win32 Registry APIs with `ExpandEnvironmentStringsW`.
+** Detects dropped Registry entries, Registry duplicates, and >2,047-character risk.
+** Rebuilds a deduplicated `PATH` (keeping legitimate process-only additions such as active virtualenvs while dropping mid-path truncation fragments) and updates the process environment via `SetEnvironmentVariableW` + `std.process.environment["PATH"]`.
+* Wired `ensureWindowsPathHealth()` at the top of `main()` (`source/harness/app.d`), printing concise repair/error notices to `stderr` so `stdout` JSON stays intact, and passing the report into `runServer()` (`source/harness/server.d`).
+* Added `GET /api/env-health`, `POST /api/env-health/recheck`, and `pathHealth` inside `GET /api/health`, plus metathread `env_health` audit logging when a repair or error occurs.
+* Added an accessible `#env-alert` banner in `web/index.html`, `web/app.js`, and `web/styles.css` displaying the fix summary (or error), expandable sample dropped entries, a Recheck button, and a direct link to https://docs.devcentr.org/general-knowledge/reference/windows-path-truncation/.
+* Added unit tests in `tests/store_test.d` covering healthy, truncated+repaired, mid-path fragment stripping, setter failure, registry read failure, and `/api/env-health` + `/api/health`.

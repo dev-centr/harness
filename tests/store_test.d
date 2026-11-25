@@ -96,3 +96,87 @@ unittest
     auto bad = ProducingAgent("cursor","s","actual-model","invalid");
     assertThrown(bad.validate());
 }
+
+unittest
+{
+    import harness.pathcheck : PathHealthReport, RegistryPathSnapshot,
+        WINDOWS_PATH_TRUNCATION_DOCS_URL, analyzeAndBuildRepairedPath,
+        ensureWindowsPathHealthWithHooks;
+    import harness.server : ServerContext, handleRequest;
+    import std.json : parseJSON;
+
+    // 1. Healthy PATH: no dropped entries.
+    string repaired;
+    auto ok = analyzeAndBuildRepairedPath(
+        `C:\Windows\System32;C:\Tools\bin;C:\Users\dev\.cargo\bin`,
+        `C:\Windows\System32;C:\Tools\bin`,
+        `C:\Users\dev\.cargo\bin`,
+        repaired);
+    assert(!ok.truncated);
+    assert(ok.status == "ok");
+    assert(ok.droppedCount == 0);
+
+    // 2. Truncated PATH: Explorer dropped User PATH and chopped the tail mid-entry;
+    //    real process-only venv entry must be preserved while broken tail is discarded.
+    auto trunc = analyzeAndBuildRepairedPath(
+        `C:\Proj\.venv\Scripts;C:\Windows\System32;C:\Users\dev\AppDa`,
+        `C:\Windows\System32;C:\Tools\bin`,
+        `C:\Users\dev\AppData\Local\Programs\Python;C:\Tools\bin;C:\Users\dev\.cargo\bin`,
+        repaired);
+    assert(trunc.truncated);
+    assert(trunc.droppedCount == 3);
+    assert(trunc.duplicateCount == 1);
+    assert(repaired.canFind(`C:\Proj\.venv\Scripts`));
+    assert(repaired.canFind(`C:\Users\dev\.cargo\bin`));
+    assert(!repaired.canFind(`C:\Users\dev\AppDa;`));
+
+    // 3. Hook-based auto-repair succeeds -> status "fixed".
+    string applied;
+    auto fixed = ensureWindowsPathHealthWithHooks(
+        () => RegistryPathSnapshot(
+            `C:\Windows\System32`,
+            `C:\Windows\System32`,
+            `C:\Users\dev\.cargo\bin;C:\Users\dev\.local\bin`
+        ),
+        (string p) { applied = p; }
+    );
+    assert(fixed.status == "fixed");
+    assert(fixed.repaired);
+    assert(fixed.droppedCount == 2);
+    assert(applied.canFind(`C:\Users\dev\.cargo\bin`));
+    assert(fixed.detailsUrl == WINDOWS_PATH_TRUNCATION_DOCS_URL);
+
+    // 4. Hook-based setter failure -> status "error" with explanation & docs link.
+    auto setErr = ensureWindowsPathHealthWithHooks(
+        () => RegistryPathSnapshot(`C:\Windows\System32`, `C:\Windows\System32`, `C:\Users\dev\bin`),
+        (string _) { throw new Exception("simulated SetEnvironmentVariableW failure"); }
+    );
+    assert(setErr.status == "error");
+    assert(!setErr.repaired);
+    assert(setErr.errorMessage.canFind("SetEnvironmentVariableW"));
+    assert(setErr.detailsUrl == WINDOWS_PATH_TRUNCATION_DOCS_URL);
+
+    // 5. Hook-based Registry read failure -> status "error".
+    auto readErr = ensureWindowsPathHealthWithHooks(
+        () { throw new Exception("simulated Registry ACL denial"); return RegistryPathSnapshot.init; },
+        (string _) {}
+    );
+    assert(readErr.status == "error");
+    assert(readErr.errorMessage.canFind("Registry ACL denial"));
+
+    // 6. HTTP /api/env-health and /api/health expose pathHealth for the desk UI.
+    import std.string : indexOf;
+    ServerContext ctx;
+    ctx.pathHealth = fixed;
+    auto envResp = handleRequest(ctx, "GET /api/env-health HTTP/1.1\r\n\r\n");
+    assert(envResp.canFind("200 OK"));
+    auto envBody = parseJSON(envResp[envResp.indexOf("\r\n\r\n") + 4 .. $]);
+    assert(envBody["status"].str == "fixed");
+    assert(envBody["detailsUrl"].str == WINDOWS_PATH_TRUNCATION_DOCS_URL);
+
+    auto healthResp = handleRequest(ctx, "GET /api/health HTTP/1.1\r\n\r\n");
+    assert(healthResp.canFind("200 OK"));
+    auto healthBody = parseJSON(healthResp[healthResp.indexOf("\r\n\r\n") + 4 .. $]);
+    assert(healthBody["pathHealth"]["status"].str == "fixed");
+    assert(healthBody["pathHealth"]["detailsUrl"].str == WINDOWS_PATH_TRUNCATION_DOCS_URL);
+}

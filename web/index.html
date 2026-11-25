@@ -17,20 +17,41 @@
   5. View modes: Linear | Grid | Tree (shell toggle).
 -->
 <body data-view="linear">
-  <header class="shell-bar">
-    <div class="shell-identity">
-      <span class="shell-label">Harness</span>
-      <strong id="run-chip">coordinator</strong>
-    </div>
-    <div class="shell-controls">
-      <div class="view-mode" role="group" aria-label="View mode">
-        <button type="button" class="view-mode-btn is-active" data-view="linear">Linear</button>
-        <button type="button" class="view-mode-btn" data-view="grid">Grid</button>
-        <button type="button" class="view-mode-btn" data-view="tree">Tree</button>
+  <div class="top-chrome">
+    <header class="shell-bar">
+      <div class="shell-identity">
+        <span class="shell-label">Harness</span>
+        <strong id="run-chip">coordinator</strong>
       </div>
-      <button type="button" id="btn-spawn-task" class="epoch-btn">Spawn task</button>
-    </div>
-  </header>
+      <div class="shell-controls">
+        <div class="view-mode" role="group" aria-label="View mode">
+          <button type="button" class="view-mode-btn is-active" data-view="linear">Linear</button>
+          <button type="button" class="view-mode-btn" data-view="grid">Grid</button>
+          <button type="button" class="view-mode-btn" data-view="tree">Tree</button>
+        </div>
+        <button type="button" id="btn-spawn-task" class="epoch-btn">Spawn task</button>
+      </div>
+    </header>
+
+    <section class="env-alert" id="env-alert" role="alert" aria-live="polite" hidden>
+      <div class="env-alert-body">
+        <div class="env-alert-head">
+          <strong id="env-alert-title">Windows PATH truncation detected</strong>
+          <span class="env-alert-badge" id="env-alert-badge">Auto-fixed</span>
+        </div>
+        <p class="env-alert-summary" id="env-alert-summary"></p>
+        <details class="env-alert-details" id="env-alert-details" hidden>
+          <summary id="env-alert-details-summary">Show dropped PATH entries</summary>
+          <ul class="env-alert-list" id="env-alert-list"></ul>
+        </details>
+      </div>
+      <div class="env-alert-actions">
+        <a class="env-alert-link" id="env-alert-link" href="https://docs.devcentr.org/general-knowledge/reference/windows-path-truncation/" target="_blank" rel="noopener noreferrer">Why this happens &amp; permanent fix ↗</a>
+        <button type="button" class="env-alert-btn" id="env-alert-recheck">Recheck</button>
+        <button type="button" class="env-alert-close" id="env-alert-dismiss" aria-label="Dismiss Windows PATH alert">×</button>
+      </div>
+    </section>
+  </div>
 
   <div class="desk-shell">
     <!-- Linear: sidebar of discussion nodes (not tasks) -->

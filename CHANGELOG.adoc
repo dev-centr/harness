@@ -2,6 +2,15 @@
 :toc: preamble
 :toclevels: 3
 
+== 2026-11-24
+
+=== Windows PATH truncation detection, auto-repair, and UI alert
+
+* Added `harness.pathcheck` to inspect inherited process `PATH` against Registry `HKLM` Machine + `HKCU` User `PATH` (with `REG_EXPAND_SZ` expansion) automatically on every process launch and `harness serve` startup.
+* Automatically repairs the Harness process `PATH` (preserving legitimate process-only entries while discarding mid-path Explorer truncation fragments and deduplicating Registry entries) so child tools inherit the full `PATH`.
+* Exposed `GET /api/env-health`, `POST /api/env-health/recheck`, and `pathHealth` in `GET /api/health`, added `stderr` diagnostics on CLI runs, and added a top alert banner in the Harness desk UI reporting auto-fixes or errors with a direct link to https://docs.devcentr.org/general-knowledge/reference/windows-path-truncation/.
+* link:changelog-details/2026-11-24 - windows-path-truncation-guard.adoc[Details]
+
 == 2026-11-08
 
 === Observed producer identity per event

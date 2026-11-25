@@ -6,6 +6,7 @@ license "BSL-1.0"
 version "0.5.0"
 
 dependency "tgc" path="../../dlang-supplemental/tgc"
+libs "advapi32" platform="windows"
 
 configuration "application" {
     targetType "executable"

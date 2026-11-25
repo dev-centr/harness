@@ -3,6 +3,7 @@ module harness.app;
 import harness.rt;
 import harness.mixr;
 import harness.models;
+import harness.pathcheck;
 import harness.server;
 import harness.store;
 
@@ -14,6 +15,14 @@ import std.stdio;
 
 int main(string[] args)
 {
+    auto pathHealth = ensureWindowsPathHealth();
+    if (pathHealth.status == "fixed")
+        stderr.writeln("[harness] Windows PATH truncation auto-fixed: ", pathHealth.summary,
+            " More details: ", pathHealth.detailsUrl);
+    else if (pathHealth.status == "error")
+        stderr.writeln("[harness] Windows PATH truncation error: ", pathHealth.summary,
+            " More details: ", pathHealth.detailsUrl);
+
     if (args.length < 2)
     {
         printUsage();
@@ -35,7 +44,7 @@ int main(string[] args)
     case "graph":
         return cmdGraph(args);
     case "serve":
-        return cmdServe(args);
+        return cmdServe(args, pathHealth);
     case "route":
         return cmdRoute(args);
     default:
@@ -137,7 +146,7 @@ int cmdGraph(string[] args)
     return 0;
 }
 
-int cmdServe(string[] args)
+int cmdServe(string[] args, PathHealthReport pathHealth)
 {
     string chatRoot, host = "127.0.0.1", policy = "balanced";
     uint port = 8765;
@@ -145,7 +154,7 @@ int cmdServe(string[] args)
     if (args.length < 2)
         return 1;
     chatRoot = args[1];
-    runServer(chatRoot, host, cast(ushort) port, parsePolicy(policy));
+    runServer(chatRoot, host, cast(ushort) port, parsePolicy(policy), pathHealth);
     return 0;
 }
 

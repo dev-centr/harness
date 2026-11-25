@@ -26,6 +26,7 @@ Harness is **D only**, enables **tgc** (thread-local GC) by default, persists it
 | **desk PM** | Status colors for `awaiting_user` / failed; **Mark completed** + **Archive** (`POST /api/hide`) |
 | **desk views** | **Linear** / **Grid** / **Tree** — discussion vs workers separation; fork drill-in for full node transcript |
 | **plan queue** | Cross-cutting **plan-stack** dock (`GET /api/plan-queue`) — ETA-sized speculative waits; not a 4th view mode |
+| **env guard** | Automatic Windows `PATH` truncation detection & process repair on launch; desk alert banner + `GET /api/env-health` linking to [Windows PATH truncation docs](https://docs.devcentr.org/general-knowledge/reference/windows-path-truncation/) |
 
 ## Contents
 

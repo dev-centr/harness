@@ -3,6 +3,7 @@ module harness.server;
 import harness.closeout : closeoutPayload;
 import harness.mixr;
 import harness.models;
+import harness.pathcheck;
 import harness.planstack;
 import harness.store;
 import harness.temporal;
@@ -24,15 +25,20 @@ struct ServerContext
     ChatStore store;
     Mixr mixr;
     TemporalEngine temporal;
+    PathHealthReport pathHealth;
     string webDir;
 }
 
-void runServer(string chatRoot, string host = "127.0.0.1", ushort port = 8765, Policy policy = Policy.balanced)
+void runServer(string chatRoot, string host = "127.0.0.1", ushort port = 8765, Policy policy = Policy.balanced,
+    PathHealthReport initialPathHealth = PathHealthReport.init)
 {
     ServerContext ctx;
     ctx.store.root = chatRoot;
+    ctx.pathHealth = initialPathHealth.checked ? initialPathHealth : ensureWindowsPathHealth();
     if (ctx.store.listNodeIds().length == 0)
         ctx.store.initSession("Harness desk");
+    if (ctx.pathHealth.status == "fixed" || ctx.pathHealth.status == "error")
+        ctx.store.appendMetathread("env_health", ctx.pathHealth.toJson());
 
     if (ctx.store.loadAllNodes().length <= 1)
     {
@@ -147,6 +153,10 @@ string handleRequest(ref ServerContext ctx, string req)
             // Cross-cutting speculative plan stack — proxies plan-stackd (not a 4th view mode).
             return jsonResponse(200, fetchOverview());
         }
+        if (path == "/api/env-health")
+        {
+            return jsonResponse(200, ctx.pathHealth.toJson());
+        }
         if (path == "/api/health" || path == "/health")
         {
             JSONValue o = JSONValue.emptyObject;
@@ -154,6 +164,7 @@ string handleRequest(ref ServerContext ctx, string req)
             o["name"] = JSONValue("harness");
             o["version"] = JSONValue("0.5.0");
             o["mixr"] = ctx.mixr.statusJson();
+            o["pathHealth"] = ctx.pathHealth.toJson();
             return jsonResponse(200, o);
         }
         if (path == "/v1/models")
@@ -178,6 +189,13 @@ string handleRequest(ref ServerContext ctx, string req)
     else if (method == "POST")
     {
         auto j = body.length ? parseJSON(body) : JSONValue.emptyObject;
+        if (path == "/api/env-health/recheck")
+        {
+            ctx.pathHealth = ensureWindowsPathHealth();
+            if (ctx.pathHealth.status == "fixed" || ctx.pathHealth.status == "error")
+                ctx.store.appendMetathread("env_health", ctx.pathHealth.toJson());
+            return jsonResponse(200, ctx.pathHealth.toJson());
+        }
         if (path == "/api/message" || path == "/api/edit-event")
         {
             auto nodeId = j["nodeId"].str;
